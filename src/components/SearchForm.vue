@@ -14,11 +14,14 @@ export default {
   name: 'search-form',
   data(){
     return {
-      searchString: ""
+      searchString: "",
     }
   },
-  handleSearch: function () {
-    eventBus.$emit('search-string', this.searchString)
+  methods: {
+    handleSearch: function () {
+      eventBus.$emit('search-string', this.searchString)
+    }
+
   }
 }
 </script>
