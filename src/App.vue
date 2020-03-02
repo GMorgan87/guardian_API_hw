@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <search-form/>
-    <articles-display :articles='articles'/>
+    <search-form :sections='sections'/>
+    <articles-display :articles='articles' />
   </div>
 </template>
 
@@ -20,27 +20,40 @@ export default {
   data() {
     return {
       articles: [],
-      searchString: ""
+      searchString: "",
+      sections: [],
+      selectedSection: ""
     }
   },
   mounted() {
     eventBus.$on('search-string', (searchString) => {
     this.searchString = searchString;
-    fetch(`https://content.guardianapis.com/search?q=search&format=json&api-key=test`)
-  .then(res => res.json())
-  .then(data => this.articles = data.response.results)
+    if (this.selectedSection) {
+      fetch(`https://content.guardianapis.com/search?section=${this.selectedSection}&order-by=newest&page-size=20&q=${searchString}&format=json&api-key=d5bc564c-0e84-4650-a284-ed696ea2ac2d`)
+      .then(res => res.json())
+      .then(data => this.articles = data.response.results)
+    } else {
+      fetch(`https://content.guardianapis.com/search?order-by=newest&page-size=20&q=${searchString}&format=json&api-key=d5bc564c-0e84-4650-a284-ed696ea2ac2d`)
+      .then(res => res.json())
+      .then(data => this.articles = data.response.results)
+}
   })
+
+  fetch(`https://content.guardianapis.com/sections?api-key=d5bc564c-0e84-4650-a284-ed696ea2ac2d`)
+    .then(res => res.json())
+    .then(data => this.sections = data.response.results)
+
+    eventBus.$on('section-select', (selectedSection) => this.selectedSection = selectedSection)
   }
 }
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Georgia, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
